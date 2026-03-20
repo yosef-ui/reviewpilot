@@ -126,8 +126,16 @@ export default function DashboardPage() {
         ) : null}
 
         {!trialActive ? (
-          <div className="mt-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-orange-800">
-            Dein Test ist abgelaufen – jetzt für €9,90/Monat weitermachen
+          <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-semibold">Dein Test ist abgelaufen</p>
+              <Link
+                href="/bezahlen"
+                className="inline-flex h-10 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
+              >
+                Jetzt für €9,90/Monat weitermachen
+              </Link>
+            </div>
           </div>
         ) : null}
 
