@@ -139,7 +139,7 @@ export default function DashboardPage() {
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-xl">
           <Link
-            href="/kalender"
+            href="/kalender-ansicht"
             className="inline-flex h-12 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
           >
             📅 Kalender öffnen

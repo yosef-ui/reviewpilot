@@ -230,6 +230,13 @@ export default function KalenderPage() {
       </header>
 
       <main className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+          Neuer Kalender verfügbar:{" "}
+          <Link href="/kalender-ansicht" className="font-semibold underline">
+            Zur Wochenansicht wechseln
+          </Link>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
             <h1 className="text-2xl font-black tracking-tight">Neuen Termin anlegen</h1>

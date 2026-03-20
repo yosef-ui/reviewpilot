@@ -74,9 +74,9 @@ function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <div className="text-lg font-extrabold text-[#1e3a8a]">⭐ ReviewPilot</div>
         <div className="flex items-center gap-3">
-          <a href="#" className="text-sm font-semibold text-zinc-500 hover:text-zinc-700">
+          <Link href="/login" className="text-sm font-semibold text-zinc-500 hover:text-zinc-700">
             Anmelden
-          </a>
+          </Link>
           <Link
             href="/registrierung"
             className="inline-flex h-10 items-center rounded-xl bg-[#2563eb] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
