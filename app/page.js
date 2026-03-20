@@ -78,7 +78,7 @@ function Navbar() {
             Anmelden
           </a>
           <Link
-            href="/kalender"
+            href="/registrierung"
             className="inline-flex h-10 items-center rounded-xl bg-[#2563eb] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
           >
             Kostenlos testen →
@@ -109,13 +109,13 @@ function HeroSection() {
         </p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href="/kalender"
+            href="/registrierung"
             className="inline-flex h-12 items-center rounded-2xl bg-[#2563eb] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
           >
             Kostenlos 14 Tage testen →
           </Link>
           <Link
-            href="/kalender"
+            href="/registrierung"
             className="inline-flex h-12 items-center rounded-2xl border border-zinc-300 bg-white px-6 text-sm font-semibold text-zinc-800 shadow-sm transition hover:bg-zinc-50"
           >
             Wie funktioniert&apos;s?
@@ -362,7 +362,7 @@ function PricingSection() {
             <li>✓ E-Mail Support</li>
           </ul>
           <Link
-            href="/kalender"
+            href="/registrierung"
             className="mt-7 inline-flex h-11 items-center rounded-2xl bg-white px-6 text-sm font-semibold text-[#2563eb] transition hover:bg-blue-50"
           >
             Jetzt kostenlos testen →

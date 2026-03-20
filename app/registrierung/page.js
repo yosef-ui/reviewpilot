@@ -102,9 +102,7 @@ export default function RegistrierungPage() {
 
         <div className="mt-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
           <h1 className="text-3xl font-black tracking-tight">14 Tage kostenlos testen</h1>
-          <p className="mt-2 text-zinc-600">
-            Keine Kreditkarte nötig – jederzeit kündbar
-          </p>
+          <p className="mt-2 text-zinc-600">Keine Kreditkarte nötig</p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -164,14 +162,14 @@ export default function RegistrierungPage() {
               disabled={loading}
               className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {loading ? "Registriere..." : "Jetzt kostenlos starten →"}
+              {loading ? "Registriere..." : "Jetzt starten →"}
             </button>
           </form>
 
           <p className="mt-4 text-center text-sm text-zinc-600">
             Bereits ein Konto?{" "}
             <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-800">
-              Hier anmelden
+              Anmelden
             </Link>
           </p>
 

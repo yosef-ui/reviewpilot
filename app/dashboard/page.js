@@ -84,6 +84,12 @@ export default function DashboardPage() {
     load();
   }, [router]);
 
+  async function onSignOut() {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white px-6 py-10 text-zinc-700">Lade Dashboard...</div>
@@ -98,11 +104,26 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white text-zinc-900">
+      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/95 shadow-sm backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="text-lg font-extrabold text-[#1e3a8a]">
+            ⭐ ReviewPilot
+          </Link>
+          <button
+            onClick={onSignOut}
+            className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+          >
+            Abmelden
+          </button>
+        </div>
+      </header>
+
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <h1 className="text-3xl font-black tracking-tight">
-          Guten Morgen, {vorname || "du"}! 👋
-        </h1>
+        <h1 className="text-3xl font-black tracking-tight">Guten Morgen! 👋</h1>
         <p className="mt-2 text-zinc-600">Hier ist deine aktuelle Übersicht.</p>
+        {vorname ? (
+          <p className="mt-1 text-sm text-zinc-500">Willkommen zurück, {vorname}.</p>
+        ) : null}
 
         {!trialActive ? (
           <div className="mt-6 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-orange-800">
@@ -116,12 +137,18 @@ export default function DashboardPage() {
           <StatCard title="Bewertungen diese Woche" value={stats.bewertungenWoche} />
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-xl">
           <Link
             href="/kalender"
-            className="inline-flex h-11 items-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
           >
-            Zum Kalender →
+            📅 Kalender öffnen
+          </Link>
+          <Link
+            href="/termine"
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-purple-700"
+          >
+            📊 Alle Termine
           </Link>
         </div>
       </div>

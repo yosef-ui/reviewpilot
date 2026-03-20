@@ -79,7 +79,7 @@ export default function LoginPage() {
               disabled={loading}
               className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {loading ? "Anmelden..." : "Anmelden"}
+              {loading ? "Anmelden..." : "Anmelden →"}
             </button>
           </form>
 
