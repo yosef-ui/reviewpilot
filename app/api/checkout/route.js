@@ -1,29 +1,36 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-/** Liest den Secret Key aus der Umgebung (lokal: .env.local, Vercel: Environment Variables). */
-function readStripeSecret() {
-  const v = process.env.STRIPE_SECRET_KEY;
-  if (v == null || String(v).trim() === "") return null;
-  return String(v).trim();
+/** Stripe Node SDK braucht die Node-Runtime (nicht Edge). */
+export const runtime = "nodejs";
+
+/** Env-Variablen bei jedem Request frisch lesen (wichtig auf Vercel nach Env-Änderungen). */
+export const dynamic = "force-dynamic";
+
+function getStripeSecret() {
+  const raw = process.env.STRIPE_SECRET_KEY;
+  if (raw == null || String(raw).trim() === "") return null;
+  return String(raw).trim();
 }
 
 export async function POST() {
-  const secret = readStripeSecret();
+  const secret = getStripeSecret();
 
   if (!secret) {
     return NextResponse.json(
-      { error: "STRIPE_SECRET_KEY ist nicht gesetzt oder leer (Vercel: Production/Preview + Redeploy prüfen)." },
+      {
+        error:
+          "STRIPE_SECRET_KEY fehlt. In Vercel unter Project → Settings → Environment Variables setzen und neu deployen. Siehe docs/vercel-stripe.md",
+      },
       { status: 500 }
     );
   }
 
-  // Häufige Ursache für "Invalid API Key": pk_… statt sk_… oder Leerzeichen (wird oben getrimmt)
   if (!secret.startsWith("sk_")) {
     return NextResponse.json(
       {
         error:
-          "STRIPE_SECRET_KEY muss ein Secret Key sein (beginnt mit sk_test_ oder sk_live_) – nicht der Publishable Key (pk_…).",
+          "STRIPE_SECRET_KEY muss der Secret Key sein (sk_test_… oder sk_live_…), nicht der Publishable Key (pk_…).",
       },
       { status: 500 }
     );
