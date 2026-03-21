@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Vonage } from "@vonage/server-sdk";
 import { createClient } from "@supabase/supabase-js";
+import { SMS_STOP_FOOTER } from "../../../lib/smsTemplates";
 
 const GOOGLE_REVIEW_LINK_FALLBACK = "https://www.google.com/maps";
 
@@ -66,6 +67,7 @@ export async function POST(req) {
         : null;
 
     let from = process.env.VONAGE_FROM || FALLBACK_SENDER;
+    let profileRow = null;
 
     if (token && supabaseUrl && supabaseAnonKey) {
       const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -80,19 +82,27 @@ export async function POST(req) {
       if (!userErr && user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("firmenname")
+          .select("firmenname, custom_sms_nachricht")
           .eq("user_id", user.id)
           .maybeSingle();
+        profileRow = profile;
         if (profile?.firmenname?.trim()) {
           from = senderIdFromFirmenname(profile.firmenname);
         }
       }
     }
 
-    const smsText =
-      typeof text === "string" && text.trim().length > 0
-        ? text
-        : `Hallo ${kundenname}, vielen Dank für Ihren Besuch${firma ? ` bei ${firma}` : ""}! Wir würden uns sehr über eine kurze Google-Bewertung freuen: ${googleLink}. Diese Nachricht kommt nur einmal – versprochen! 😊`;
+    const customSms = profileRow?.custom_sms_nachricht?.trim();
+
+    let smsText;
+    if (typeof text === "string" && text.trim().length > 0) {
+      // z. B. Terminbestätigung vom Client – Standard-/Custom-Logik nicht mischen
+      smsText = text.trim();
+    } else if (customSms) {
+      smsText = `${customSms}\n\n${SMS_STOP_FOOTER}`;
+    } else {
+      smsText = `Hallo ${kundenname}, vielen Dank für Ihren Besuch${firma ? ` bei ${firma}` : ""}! Wir würden uns sehr über eine kurze Google-Bewertung freuen: ${googleLink}. Diese Nachricht kommt nur einmal – versprochen! 😊`;
+    }
 
     const response = await vonage.sms.send({
       to: telefonnummer,

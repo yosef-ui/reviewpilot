@@ -4,6 +4,7 @@ import { BrandLogoLink } from "../../components/BrandLogo";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import { SMS_STOP_FOOTER } from "../../lib/smsTemplates";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function OnboardingPage() {
   const [form, setForm] = useState({
     firmenname: "",
     googleReviewLink: "",
+    customSmsNachricht: "",
   });
   /** Nach erfolgreichem Speichern: Name für Erfolgs-Screen + Auto-Redirect */
   const [doneFirmenname, setDoneFirmenname] = useState(null);
@@ -39,7 +41,7 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("firmenname, google_review_link, onboarding_done")
+        .select("firmenname, google_review_link, custom_sms_nachricht, onboarding_done")
         .eq("user_id", user.id)
         .single();
 
@@ -51,6 +53,7 @@ export default function OnboardingPage() {
       setForm({
         firmenname: profile?.firmenname?.trim() ?? "",
         googleReviewLink: profile?.google_review_link?.trim() ?? "",
+        customSmsNachricht: profile?.custom_sms_nachricht?.trim() ?? "",
       });
       setLoading(false);
     }
@@ -79,6 +82,7 @@ export default function OnboardingPage() {
     }
     const firmenname = form.firmenname.trim();
     const googleReviewLink = form.googleReviewLink.trim();
+    const customSmsRaw = form.customSmsNachricht.trim();
     if (!firmenname || !googleReviewLink) {
       setError("Bitte Firmennamen und Google-Bewertungslink ausfüllen.");
       return;
@@ -112,6 +116,7 @@ export default function OnboardingPage() {
       .update({
         firmenname,
         google_review_link: googleReviewLink,
+        custom_sms_nachricht: customSmsRaw || null,
         onboarding_done: true,
       })
       .eq("user_id", user.id)
@@ -196,7 +201,7 @@ export default function OnboardingPage() {
           <h1 className="text-3xl font-black tracking-tight">Willkommen!</h1>
           <p className="mt-2 text-zinc-600">
             Damit deine SMS-Bewertungsanfragen zu deinem Betrieb passen, brauchen
-            wir noch zwei Angaben.
+            wir noch ein paar Angaben.
           </p>
 
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -241,6 +246,23 @@ export default function OnboardingPage() {
                 placeholder="https://g.page/.../review"
                 className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
+            </div>
+
+            <div className="block">
+              <span className="mb-1 block text-sm font-medium text-zinc-700">
+                SMS-Nachricht anpassen (optional)
+              </span>
+              <textarea
+                name="customSmsNachricht"
+                value={form.customSmsNachricht}
+                onChange={onChange}
+                rows={5}
+                placeholder="Leer lassen für die Standard-Bewertungsanfrage per SMS."
+                className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              />
+              <p className="mt-2 text-xs text-zinc-500">
+                Der letzte Satz wird automatisch hinzugefügt: {SMS_STOP_FOOTER}
+              </p>
             </div>
 
             {error ? (
