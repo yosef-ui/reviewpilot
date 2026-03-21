@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import Stripe from 'stripe';
 
-const Stripe = require("stripe");
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+console.log('Stripe Key:', process.env.STRIPE_SECRET_KEY ? 'vorhanden' : 'fehlt');
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const APP_BASE = "https://reviewpilot-gray.vercel.app";
 
