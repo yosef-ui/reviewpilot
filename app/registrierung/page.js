@@ -64,33 +64,13 @@ export default function RegistrierungPage() {
       return;
     }
 
-    const userId = data?.user?.id;
-    if (!userId) {
+    if (!data?.user?.id) {
       setLoading(false);
       setError("Registrierung konnte nicht abgeschlossen werden.");
       return;
     }
 
-    const trialStart = new Date();
-    const trialEnd = new Date(trialStart);
-    trialEnd.setDate(trialEnd.getDate() + 14);
-
-    const { error: profileError } = await supabase.from("profiles").upsert({
-      user_id: userId,
-      vorname: form.vorname.trim(),
-      nachname: form.nachname.trim(),
-      trial_start: trialStart.toISOString(),
-      trial_end: trialEnd.toISOString(),
-      is_paid: false,
-    });
-
     setLoading(false);
-
-    if (profileError) {
-      setError(`Konto erstellt, aber Profil fehlgeschlagen: ${profileError.message}`);
-      return;
-    }
-
     router.push("/dashboard");
   }
 
