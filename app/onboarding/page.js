@@ -95,20 +95,92 @@ export default function OnboardingPage() {
       return;
     }
 
-    const { error: upErr } = await supabase
+    // Wichtig: .select() nach UPDATE – sonst meldet PostgREST bei 0 Zeilen oft keinen Fehler
+    // (z. B. keine profiles-Zeile), und onboarding_done wird nicht gesetzt.
+    const { data: updatedRow, error: upErr } = await supabase
       .from("profiles")
       .update({
         firmenname,
         google_review_link: googleReviewLink,
         onboarding_done: true,
       })
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .select("user_id, onboarding_done")
+      .maybeSingle();
 
-    setSaving(false);
     if (upErr) {
+      setSaving(false);
       setError(upErr.message);
       return;
     }
+
+    let saved = updatedRow?.onboarding_done === true;
+
+    // Keine Zeile getroffen (kein Profil): einmalig anlegen
+    if (!saved) {
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!existing) {
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
+        const meta = user.user_metadata || {};
+        const vn = String(meta.vorname ?? "-").trim() || "-";
+        const nn = String(meta.nachname ?? "-").trim() || "-";
+
+        const { data: inserted, error: insErr } = await supabase
+          .from("profiles")
+          .insert({
+            user_id: user.id,
+            vorname: vn,
+            nachname: nn,
+            trial_start: new Date().toISOString(),
+            trial_end: trialEnd.toISOString(),
+            is_paid: false,
+            firmenname,
+            google_review_link: googleReviewLink,
+            onboarding_done: true,
+          })
+          .select("user_id, onboarding_done")
+          .maybeSingle();
+
+        if (insErr) {
+          setSaving(false);
+          setError(insErr.message);
+          return;
+        }
+        saved = inserted?.onboarding_done === true;
+      }
+    }
+
+    if (!saved) {
+      setSaving(false);
+      setError(
+        "Profil wurde nicht aktualisiert (0 Zeilen). Bitte in Supabase die Spalte „onboarding_done“ in „profiles“ anlegen (siehe supabase/profiles_onboarding.sql) und es erneut versuchen."
+      );
+      return;
+    }
+
+    // Nochmal lesen, damit Dashboard dieselben Daten sieht wie die DB
+    const { data: verify, error: verErr } = await supabase
+      .from("profiles")
+      .select("onboarding_done")
+      .eq("user_id", user.id)
+      .single();
+
+    setSaving(false);
+
+    if (verErr || verify?.onboarding_done !== true) {
+      setError(
+        verErr?.message ||
+          "onboarding_done konnte nicht bestätigt werden. Bitte Supabase-Schema prüfen."
+      );
+      return;
+    }
+
     setDoneFirmenname(firmenname);
   }
 
