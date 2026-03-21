@@ -25,12 +25,17 @@ export default function OnboardingPage() {
         return;
       }
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session?.user) {
+        setLoading(false);
         router.replace("/login");
         return;
       }
+
+      const user = session.user;
 
       const { data: profile } = await supabase
         .from("profiles")
@@ -86,14 +91,19 @@ export default function OnboardingPage() {
     }
 
     setSaving(true);
+
     const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session?.user) {
       setSaving(false);
       router.replace("/login");
       return;
     }
+
+    const user = session.user;
 
     // Wichtig: .select() nach UPDATE – sonst meldet PostgREST bei 0 Zeilen oft keinen Fehler
     // (z. B. keine profiles-Zeile), und onboarding_done wird nicht gesetzt.
