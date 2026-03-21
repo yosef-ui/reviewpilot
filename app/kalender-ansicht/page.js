@@ -12,7 +12,7 @@ const START_HOUR = 8;
 const END_HOUR = 20;
 const SLOT_HOURS = END_HOUR - START_HOUR;
 const HOUR_HEIGHT = 64;
-const REVIEW_LINK = "https://www.google.com/maps";
+const GOOGLE_REVIEW_FALLBACK = "https://www.google.com/maps";
 
 export default function KalenderAnsichtPage() {
   const router = useRouter();
@@ -33,29 +33,38 @@ export default function KalenderAnsichtPage() {
   const [selectedTermin, setSelectedTermin] = useState(null);
   const [sending, setSending] = useState(false);
   const [userId, setUserId] = useState(null);
+  /** Aus profiles – für SMS-Text (Firma + Bewertungslink) */
+  const [smsContext, setSmsContext] = useState({
+    firmenname: "",
+    googleReviewLink: "",
+  });
 
   const weekDays = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
     [weekStart]
   );
 
-  const refetchWeek = useCallback(async () => {
-    if (!supabase) return;
-    const start = toDateInput(weekStart);
-    const end = toDateInput(addDays(weekStart, 6));
-    const { data, error } = await supabase
-      .from("Termine")
-      .select("*")
-      .gte("datum", start)
-      .lte("datum", end)
-      .order("datum", { ascending: true })
-      .order("uhrzeit", { ascending: true });
-    if (error) {
-      setStatus(`Fehler beim Laden: ${error.message}`);
-      return;
-    }
-    setTermine(Array.isArray(data) ? data : []);
-  }, [weekStart]);
+  const refetchWeek = useCallback(
+    async (uid) => {
+      if (!supabase || !uid) return;
+      const start = toDateInput(weekStart);
+      const end = toDateInput(addDays(weekStart, 6));
+      const { data, error } = await supabase
+        .from("Termine")
+        .select("*")
+        .eq("user_id", uid)
+        .gte("datum", start)
+        .lte("datum", end)
+        .order("datum", { ascending: true })
+        .order("uhrzeit", { ascending: true });
+      if (error) {
+        setStatus(`Fehler beim Laden: ${error.message}`);
+        return;
+      }
+      setTermine(Array.isArray(data) ? data : []);
+    },
+    [weekStart]
+  );
 
   useEffect(() => {
     async function boot() {
@@ -72,11 +81,38 @@ export default function KalenderAnsichtPage() {
         return;
       }
       setUserId(user.id);
-      await refetchWeek();
-      setLoading(false);
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("firmenname, google_review_link")
+        .eq("user_id", user.id)
+        .single();
+      if (
+        !profile?.firmenname?.trim() ||
+        !profile?.google_review_link?.trim()
+      ) {
+        setLoading(false);
+        router.replace("/onboarding");
+        return;
+      }
+      setSmsContext({
+        firmenname: profile?.firmenname ?? "",
+        googleReviewLink: profile?.google_review_link ?? "",
+      });
     }
     boot();
-  }, [refetchWeek, router]);
+  }, [router]);
+
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    (async () => {
+      await refetchWeek(userId);
+      if (!cancelled) setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, weekStart, refetchWeek]);
 
   async function onSignOut() {
     if (!supabase) return;
@@ -107,7 +143,13 @@ export default function KalenderAnsichtPage() {
       return;
     }
 
+    if (!userId) {
+      setStatus("Nicht angemeldet.");
+      return;
+    }
+
     const payload = {
+      user_id: userId,
       kundenname: createForm.kundenname.trim(),
       telefonnummer: createForm.telefonnummer.trim(),
       datum: createForm.datum,
@@ -146,11 +188,11 @@ export default function KalenderAnsichtPage() {
       uhrzeit: "",
       optin: false,
     });
-    await refetchWeek();
+    await refetchWeek(userId);
   }
 
   async function markTerminErledigt(termin) {
-    if (!supabase || !termin || termin.sms_gesendet) return;
+    if (!supabase || !userId || !termin || termin.sms_gesendet) return;
     if (!termin.optin) {
       setStatus("Kein Opt-in vorhanden. SMS wird nicht gesendet.");
       return;
@@ -160,13 +202,16 @@ export default function KalenderAnsichtPage() {
     setStatus("Sende SMS...");
 
     try {
+      const link =
+        (smsContext.googleReviewLink || "").trim() || GOOGLE_REVIEW_FALLBACK;
       const res = await fetch("/api/sms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           kundenname: termin.kundenname,
           telefonnummer: termin.telefonnummer,
-          link: REVIEW_LINK,
+          link,
+          firmenname: (smsContext.firmenname || "").trim() || undefined,
         }),
       });
       if (!res.ok) {
@@ -180,7 +225,10 @@ export default function KalenderAnsichtPage() {
       return;
     }
 
-    const query = supabase.from("Termine").update({ sms_gesendet: true });
+    const query = supabase
+      .from("Termine")
+      .update({ sms_gesendet: true })
+      .eq("user_id", userId);
     const { error } =
       termin.id !== undefined && termin.id !== null
         ? await query.eq("id", termin.id)
@@ -199,7 +247,7 @@ export default function KalenderAnsichtPage() {
 
     setSelectedTermin(null);
     setStatus("Termin erledigt. SMS gesendet.");
-    await refetchWeek();
+    await refetchWeek(userId);
   }
 
   if (loading) {

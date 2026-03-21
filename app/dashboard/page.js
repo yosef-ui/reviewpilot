@@ -38,11 +38,19 @@ export default function DashboardPage() {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("vorname, trial_end")
+        .select("vorname, trial_end, firmenname, google_review_link")
         .eq("user_id", user.id)
         .single();
 
       if (!profileError && profile) {
+        const onboardingDone =
+          Boolean(profile.firmenname?.trim()) &&
+          Boolean(profile.google_review_link?.trim());
+        if (!onboardingDone) {
+          setLoading(false);
+          router.replace("/onboarding");
+          return;
+        }
         setVorname(profile.vorname || "");
         const active = profile.trial_end
           ? new Date(profile.trial_end).getTime() > new Date().getTime()
