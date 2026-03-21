@@ -53,3 +53,11 @@ vercel env pull .env.local
 | Lokal ok, Vercel nein | Nur in `.env.local`, nicht in Vercel → Schritt 2 |
 
 Die API-Route `app/api/checkout/route.js` nutzt **`runtime = "nodejs"`** und **`dynamic = "force-dynamic"`**, damit der Key zur Laufzeit korrekt gelesen wird.
+
+## 6. Customer Portal („Abo verwalten“)
+
+1. Im Stripe-Dashboard: **Einstellungen (Zahnrad)** → **Billing** → **Customer portal** (oder **Product catalog** je nach Ansicht) – Portal **aktivieren** und gewünschte Funktionen (Kündigung, Zahlungsmittel, Rechnungen) freischalten.
+2. In Supabase die Spalte **`stripe_customer_id`** anlegen: Skript **`supabase/profiles_stripe_customer_id.sql`** ausführen.
+3. Optional: **`NEXT_PUBLIC_APP_URL`** in Vercel setzen (z. B. `https://deine-domain.vercel.app`) – sonst nutzt die API einen festen Fallback für die Rückkehr-URL nach dem Portal.
+
+Die Seite **`/settings`** ruft **`POST /api/billing-portal`** auf; Stripe liefert eine **einmalige Portal-URL** (`billingPortal.sessions.create`).

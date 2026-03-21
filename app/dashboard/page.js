@@ -109,12 +109,20 @@ export default function DashboardPage() {
           <Link href="/" className="text-lg font-extrabold text-[#1e3a8a]">
             ⭐ ReviewPilot
           </Link>
-          <button
-            onClick={onSignOut}
-            className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
-          >
-            Abmelden
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/settings"
+              className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+            >
+              Einstellungen
+            </Link>
+            <button
+              onClick={onSignOut}
+              className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+            >
+              Abmelden
+            </button>
+          </div>
         </div>
       </header>
 
