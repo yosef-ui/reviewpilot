@@ -61,14 +61,17 @@ export default function DashboardPage() {
           supabase
             .from("Termine")
             .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
             .eq("datum", todayStr),
           supabase
             .from("Termine")
             .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
             .eq("sms_gesendet", true),
           supabase
             .from("Termine")
             .select("*", { count: "exact", head: true })
+            .eq("user_id", user.id)
             .eq("bewertet", true)
             .gte("datum", weekStartStr),
         ]);
