@@ -2,17 +2,20 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 export async function POST() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    return NextResponse.json(
+      {
+        error:
+          'Key fehlt: ' +
+          JSON.stringify(Object.keys(process.env).filter((k) => k.includes('STRIPE'))),
+      },
+      { status: 500 }
+    );
+  }
+  const stripe = new Stripe(key);
+
   try {
-    const secret = process.env.STRIPE_SECRET_KEY;
-    if (!secret) {
-      return NextResponse.json(
-        { error: 'Stripe-Konfiguration fehlt (STRIPE_SECRET_KEY).' },
-        { status: 500 }
-      );
-    }
-
-    const stripe = new Stripe(secret);
-
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{
