@@ -142,19 +142,20 @@ export default function OnboardingPage() {
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 Link zur Google-Bewertung
               </span>
-              <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50/80 px-3 py-2.5 text-xs leading-relaxed text-blue-950">
+              <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50/80 px-3 py-3 text-sm leading-relaxed text-blue-950">
                 <p className="m-0">
-                  Deinen Google Review Link findest du kostenlos auf{" "}
-                  <a
-                    href="https://whitespark.ca/google-review-link-generator"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-2 hover:text-blue-900"
-                  >
-                    whitespark.ca/google-review-link-generator
-                  </a>{" "}
-                  – gib dort deinen Firmennamen ein und kopiere den Link.
+                  Deinen Google Review Link kostenlos erstellen: Geh auf
+                  whitespark.ca/google-review-link-generator, gib deinen
+                  Firmennamen ein und kopiere den Link.
                 </p>
+                <a
+                  href="https://whitespark.ca/google-review-link-generator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex h-10 items-center justify-center rounded-lg border border-blue-300 bg-white px-4 text-sm font-semibold text-blue-800 shadow-sm transition hover:bg-blue-100"
+                >
+                  Link Generator öffnen
+                </a>
               </div>
               <input
                 name="googleReviewLink"
