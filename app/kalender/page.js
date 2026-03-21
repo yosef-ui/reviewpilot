@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
+import { ensureKundeExists } from "../../lib/kunden";
+import KundennameAutocomplete from "../../components/KundennameAutocomplete";
 
 const GOOGLE_REVIEW_LINK_FALLBACK = "https://www.google.com/maps";
 
@@ -18,6 +20,7 @@ export default function KalenderPage() {
   const [termine, setTermine] = useState([]);
   const [sendingId, setSendingId] = useState(null);
   const [userChecked, setUserChecked] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const sortedTermine = useMemo(() => {
     return [...termine].sort((a, b) => {
@@ -58,6 +61,7 @@ export default function KalenderPage() {
         return;
       }
 
+      setUserId(user.id);
       setUserChecked(true);
       await refetchTermine();
     }
@@ -94,6 +98,20 @@ export default function KalenderPage() {
       return;
     }
 
+    let kundeErr = null;
+    if (userId) {
+      const res = await ensureKundeExists(
+        supabase,
+        userId,
+        payload.kundenname,
+        payload.telefonnummer
+      );
+      kundeErr = res.error;
+    }
+    if (kundeErr) {
+      setStatus(`Termin gespeichert. Hinweis Kundenliste: ${kundeErr.message}`);
+    }
+
     if (optIn) {
       try {
         await fetch("/api/sms", {
@@ -115,7 +133,9 @@ export default function KalenderPage() {
     setDatum("");
     setUhrzeit("");
     setOptIn(false);
-    setStatus("Termin gespeichert.");
+    if (!kundeErr) {
+      setStatus("Termin gespeichert.");
+    }
     await refetchTermine();
   }
 
@@ -246,10 +266,12 @@ export default function KalenderPage() {
 
             <form onSubmit={onSubmit} className="mt-6 space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field
-                  label="Kundenname"
+                <KundennameAutocomplete
+                  supabase={supabase}
+                  userId={userId}
                   value={kundenname}
                   onChange={setKundenname}
+                  onPhoneFill={setTelefonnummer}
                   placeholder="z.B. Maria Müller"
                 />
                 <Field

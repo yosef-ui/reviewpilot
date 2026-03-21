@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
+import { ensureKundeExists } from "../../lib/kunden";
+import KundennameAutocomplete from "../../components/KundennameAutocomplete";
 
 const START_HOUR = 8;
 const END_HOUR = 20;
@@ -29,6 +31,7 @@ export default function KalenderAnsichtPage() {
 
   const [selectedTermin, setSelectedTermin] = useState(null);
   const [sending, setSending] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const weekDays = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
@@ -67,6 +70,7 @@ export default function KalenderAnsichtPage() {
         router.push("/login");
         return;
       }
+      setUserId(user.id);
       await refetchWeek();
       setLoading(false);
     }
@@ -117,6 +121,20 @@ export default function KalenderAnsichtPage() {
     if (error) {
       setStatus(`Fehler beim Speichern: ${error.message}`);
       return;
+    }
+
+    let kundeErr = null;
+    if (userId) {
+      const res = await ensureKundeExists(
+        supabase,
+        userId,
+        payload.kundenname,
+        payload.telefonnummer
+      );
+      kundeErr = res.error;
+    }
+    if (kundeErr) {
+      setStatus(`Termin gespeichert. Hinweis Kundenliste: ${kundeErr.message}`);
     }
 
     setShowCreateModal(false);
@@ -310,10 +328,14 @@ export default function KalenderAnsichtPage() {
           onClose={() => setShowCreateModal(false)}
         >
           <form onSubmit={onCreateTermin} className="space-y-4">
-            <Field
-              label="Kundenname"
+            <KundennameAutocomplete
+              supabase={supabase}
+              userId={userId}
               value={createForm.kundenname}
               onChange={(v) => setCreateForm((p) => ({ ...p, kundenname: v }))}
+              onPhoneFill={(phone) =>
+                setCreateForm((p) => ({ ...p, telefonnummer: phone }))
+              }
             />
             <Field
               label="Telefon"
