@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import { ensureKundeExists } from "../../lib/kunden";
+import { postSmsApi } from "../../lib/smsApi";
 import KundennameAutocomplete from "../../components/KundennameAutocomplete";
 
 const START_HOUR = 8;
@@ -201,15 +202,11 @@ export default function KalenderAnsichtPage() {
     try {
       const link =
         (smsContext.googleReviewLink || "").trim() || GOOGLE_REVIEW_FALLBACK;
-      const res = await fetch("/api/sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kundenname: termin.kundenname,
-          telefonnummer: termin.telefonnummer,
-          link,
-          firmenname: (smsContext.firmenname || "").trim() || undefined,
-        }),
+      const res = await postSmsApi(supabase, {
+        kundenname: termin.kundenname,
+        telefonnummer: termin.telefonnummer,
+        link,
+        firmenname: (smsContext.firmenname || "").trim() || undefined,
       });
       if (!res.ok) {
         setSending(false);

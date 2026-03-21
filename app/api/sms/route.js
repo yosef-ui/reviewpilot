@@ -1,7 +1,25 @@
 import { NextResponse } from "next/server";
 import { Vonage } from "@vonage/server-sdk";
+import { createClient } from "@supabase/supabase-js";
 
 const GOOGLE_REVIEW_LINK_FALLBACK = "https://www.google.com/maps";
+
+const FALLBACK_SENDER = "ReviewPilot";
+
+/**
+ * Vonage „from“ (alphanumeric): oft max. 11 Zeichen, [A–Z0–9] je nach Route.
+ */
+function senderIdFromFirmenname(firmenname) {
+  const fallback = process.env.VONAGE_FROM || FALLBACK_SENDER;
+  if (!firmenname || typeof firmenname !== "string") return fallback;
+  const s = firmenname
+    .trim()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .slice(0, 11);
+  return s.length > 0 ? s : fallback;
+}
 
 export async function POST(req) {
   try {
@@ -39,7 +57,38 @@ export async function POST(req) {
         ? firmenname.trim()
         : "";
 
-    const from = process.env.VONAGE_FROM || "ReviewPilot";
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const authHeader = req.headers.get("authorization");
+    const token =
+      authHeader && /^Bearer\s+/i.test(authHeader)
+        ? authHeader.replace(/^Bearer\s+/i, "").trim()
+        : null;
+
+    let from = process.env.VONAGE_FROM || FALLBACK_SENDER;
+
+    if (token && supabaseUrl && supabaseAnonKey) {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      });
+      const {
+        data: { user },
+        error: userErr,
+      } = await supabase.auth.getUser();
+      if (!userErr && user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("firmenname")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (profile?.firmenname?.trim()) {
+          from = senderIdFromFirmenname(profile.firmenname);
+        }
+      }
+    }
+
     const smsText =
       typeof text === "string" && text.trim().length > 0
         ? text
@@ -59,4 +108,3 @@ export async function POST(req) {
     );
   }
 }
-

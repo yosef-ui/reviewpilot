@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import { ensureKundeExists } from "../../lib/kunden";
+import { postSmsApi } from "../../lib/smsApi";
 import KundennameAutocomplete from "../../components/KundennameAutocomplete";
 
 const GOOGLE_REVIEW_LINK_FALLBACK = "https://www.google.com/maps";
@@ -123,14 +124,10 @@ export default function KalenderPage() {
 
     if (optIn) {
       try {
-        const smsRes = await fetch("/api/sms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            kundenname: payload.kundenname,
-            telefonnummer: payload.telefonnummer,
-            text: `Hallo ${payload.kundenname}, Ihr Termin am ${datum} um ${uhrzeit} ist bestätigt! Bei Fragen einfach anrufen. Ihr ReviewPilot Team 😊`,
-          }),
+        const smsRes = await postSmsApi(supabase, {
+          kundenname: payload.kundenname,
+          telefonnummer: payload.telefonnummer,
+          text: `Hallo ${payload.kundenname}, Ihr Termin am ${datum} um ${uhrzeit} ist bestätigt! Bei Fragen einfach anrufen. Ihr ReviewPilot Team 😊`,
         });
         const body = await smsRes.json().catch(() => ({}));
         if (!smsRes.ok) {
@@ -178,14 +175,10 @@ export default function KalenderPage() {
 
     let res;
     try {
-      res = await fetch("/api/sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kundenname: termin.kundenname,
-          telefonnummer: termin.telefonnummer,
-          link: GOOGLE_REVIEW_LINK_FALLBACK,
-        }),
+      res = await postSmsApi(supabase, {
+        kundenname: termin.kundenname,
+        telefonnummer: termin.telefonnummer,
+        link: GOOGLE_REVIEW_LINK_FALLBACK,
       });
     } catch (e) {
       setStatus(`SMS konnte nicht gesendet werden: ${e?.message || "Netzwerkfehler"}`);
