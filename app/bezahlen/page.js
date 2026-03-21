@@ -2,11 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
-);
 
 export default function BezahlenPage() {
   const [loading, setLoading] = useState(false);
@@ -16,28 +11,20 @@ export default function BezahlenPage() {
     setError("");
     setLoading(true);
 
-    const stripe = await stripePromise;
-    if (!stripe) {
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      const data = await res.json();
+
+      if (!res.ok || !data?.url) {
+        setLoading(false);
+        setError(data?.error || "Checkout konnte nicht gestartet werden.");
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch {
       setLoading(false);
-      setError("Stripe konnte nicht initialisiert werden.");
-      return;
-    }
-
-    const res = await fetch("/api/checkout", { method: "POST" });
-    const payload = await res.json();
-
-    if (!res.ok || !payload?.id) {
-      setLoading(false);
-      setError(payload?.error || "Checkout konnte nicht gestartet werden.");
-      return;
-    }
-
-    const { error: stripeError } = await stripe.redirectToCheckout({
-      sessionId: payload.id,
-    });
-    setLoading(false);
-    if (stripeError) {
-      setError(stripeError.message || "Weiterleitung zu Stripe fehlgeschlagen.");
+      setError("Checkout konnte nicht gestartet werden.");
     }
   }
 
@@ -79,4 +66,3 @@ export default function BezahlenPage() {
     </div>
   );
 }
-

@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 
-export async function POST(req) {
+const Stripe = require("stripe");
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const APP_BASE = "https://reviewpilot-gray.vercel.app";
+
+export async function POST() {
   try {
-    const secretKey = process.env.STRIPE_SECRET_KEY;
-    if (!secretKey) {
+    if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(
         { error: "Stripe-Konfiguration fehlt (STRIPE_SECRET_KEY)." },
         { status: 500 }
       );
     }
-
-    const stripe = new Stripe(secretKey);
-    const origin = new URL(req.url).origin;
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -30,12 +30,12 @@ export async function POST(req) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/dashboard?success=true`,
-      cancel_url: `${origin}/bezahlen?canceled=true`,
+      success_url: `${APP_BASE}/dashboard?success=true`,
+      cancel_url: `${APP_BASE}/bezahlen`,
       allow_promotion_codes: true,
     });
 
-    return NextResponse.json({ id: session.id });
+    return NextResponse.json({ url: session.url });
   } catch (error) {
     return NextResponse.json(
       { error: error?.message || "Stripe Checkout konnte nicht erstellt werden." },
@@ -43,4 +43,3 @@ export async function POST(req) {
     );
   }
 }
-
