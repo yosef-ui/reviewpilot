@@ -4,48 +4,48 @@ import Link from "next/link";
 import { BrandLogoLink, BrandLogoFooter } from "../components/BrandLogo";
 
 const tickerItems = [
-  { text: "⭐ +18 Bewertungen/Monat", color: "bg-blue-100 text-blue-700" },
-  { text: "📱 98% SMS-Öffnungsrate", color: "bg-green-100 text-green-700" },
-  { text: "⚡ 5 Min Setup", color: "bg-orange-100 text-orange-700" },
-  { text: "🔒 DSGVO AT & DE", color: "bg-purple-100 text-purple-700" },
-  { text: "💶 €9,90/Monat", color: "bg-pink-100 text-pink-700" },
-  { text: "🏆 Für alle Branchen", color: "bg-yellow-100 text-yellow-700" },
+  { text: "⭐ +18 Bewertungen/Monat", color: "bg-indigo-50 text-indigo-700" },
+  { text: "📱 98% SMS-Öffnungsrate", color: "bg-indigo-50 text-indigo-700" },
+  { text: "⚡ 5 Min Setup", color: "bg-indigo-50 text-indigo-700" },
+  { text: "🔒 DSGVO AT & DE", color: "bg-indigo-50 text-indigo-700" },
+  { text: "💶 €9,90/Monat", color: "bg-indigo-50 text-indigo-700" },
+  { text: "🏆 Für alle Branchen", color: "bg-indigo-50 text-indigo-700" },
 ];
 
 const whyCards = [
-  ["⭐", "+18 Bewertungen", "Im Schnitt pro Monat", "bg-yellow-50"],
-  ["📱", "98% geöffnet", "SMS werden fast immer gelesen", "bg-blue-50"],
-  ["⚡", "5 Min Setup", "Sofort startklar", "bg-orange-50"],
-  ["🔒", "DSGVO-sicher", "Konform für AT & DE", "bg-green-50"],
-  ["📅", "Eigener Kalender", "Kein extra Tool nötig", "bg-purple-50"],
-  ["💶", "€9,90/Monat", "Jederzeit kündbar", "bg-pink-50"],
+  ["⭐", "+18 Bewertungen", "Im Schnitt pro Monat", "bg-zinc-50 border border-zinc-200/80"],
+  ["📱", "98% geöffnet", "SMS werden fast immer gelesen", "bg-zinc-50 border border-zinc-200/80"],
+  ["⚡", "5 Min Setup", "Sofort startklar", "bg-zinc-50 border border-zinc-200/80"],
+  ["🔒", "DSGVO-sicher", "Konform für AT & DE", "bg-zinc-50 border border-zinc-200/80"],
+  ["📅", "Eigener Kalender", "Kein extra Tool nötig", "bg-zinc-50 border border-zinc-200/80"],
+  ["💶", "€9,90/Monat", "Jederzeit kündbar", "bg-zinc-50 border border-zinc-200/80"],
 ];
 
 const reviews = [
   {
     initials: "MM",
-    color: "bg-blue-100",
+    color: "bg-indigo-100 text-indigo-800",
     name: "Maria M.",
     text: "Super Friseur, sehr zufrieden! Komme immer wieder gerne. ✂️",
     business: "Salon Müller, Wien",
   },
   {
     initials: "SR",
-    color: "bg-green-100",
+    color: "bg-indigo-100 text-indigo-800",
     name: "Stefan R.",
     text: "Das Essen war fantastisch und der Service einfach top! Sehr empfehlenswert. 🍝",
     business: "Restaurant Bella Italia, Graz",
   },
   {
     initials: "JK",
-    color: "bg-purple-100",
+    color: "bg-indigo-100 text-indigo-800",
     name: "Julia K.",
     text: "Endlich ein Zahnarzt wo man sich wirklich wohlfühlt. Sehr einfühlsam und professionell! 🦷",
     business: "Zahnarztpraxis Dr. Hofer, Salzburg",
   },
   {
     initials: "MT",
-    color: "bg-orange-100",
+    color: "bg-indigo-100 text-indigo-800",
     name: "Markus T.",
     text: "Schnelle und saubere Arbeit! Der beste Elektriker den ich je hatte. 👍",
     business: "Elektro Huber GmbH, Linz",
@@ -87,7 +87,7 @@ function Navbar() {
           </Link>
           <Link
             href="/registrierung"
-            className="inline-flex h-10 items-center rounded-xl bg-gradient-to-r from-[#2563eb] to-[#7c3aed] px-4 text-sm font-semibold text-white shadow-sm transition hover:from-blue-600 hover:to-violet-600"
+            className="inline-flex h-10 items-center rounded-xl bg-[#6366f1] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4f46e5]"
           >
             Kostenlos testen →
           </Link>
@@ -101,12 +101,12 @@ function HeroSection() {
   return (
     <section className="bg-[#f8fafc] py-16 sm:py-24">
       <div className="mx-auto max-w-3xl px-6 text-center">
-        <p className="mx-auto inline-flex rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold text-blue-700">
+        <p className="mx-auto inline-flex rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-semibold text-indigo-700">
           ✨ Neu: Jetzt mit automatischer Terminbestätigung
         </p>
         <h1 className="mt-8 text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl">
           <span className="text-zinc-900">Deine Kunden vergessen </span>
-          <span className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent [filter:drop-shadow(0_1px_1px_rgba(37,99,235,0.12))]">
+          <span className="bg-gradient-to-r from-[#6366f1] to-[#4f46e5] bg-clip-text text-transparent [filter:drop-shadow(0_1px_1px_rgba(99,102,241,0.15))]">
             Bewertungen zu schreiben.
           </span>
         </h1>
@@ -114,12 +114,12 @@ function HeroSection() {
           Reviewpilots erinnert sie automatisch – per SMS, zur richtigen Zeit, mit den richtigen
           Worten.
         </p>
-        <div className="relative mx-auto mt-8 max-w-2xl overflow-hidden rounded-3xl border border-indigo-100/90 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-100 px-6 py-7 shadow-xl shadow-indigo-200/40 ring-1 ring-indigo-100/70 sm:px-10 sm:py-8">
+        <div className="relative mx-auto mt-8 max-w-2xl overflow-hidden rounded-3xl border border-zinc-200/90 bg-gradient-to-br from-zinc-50 via-white to-indigo-50/60 px-6 py-7 shadow-xl shadow-zinc-200/50 ring-1 ring-zinc-100 sm:px-10 sm:py-8">
           <div
-            className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#2563eb] to-[#7c3aed]"
+            className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#6366f1] to-[#4f46e5]"
             aria-hidden
           />
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600/90">
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
             Dein Potenzial
           </p>
           <p className="mt-3 text-lg font-extrabold leading-snug text-zinc-800 sm:text-xl md:text-2xl">
@@ -127,14 +127,14 @@ function HeroSection() {
               🚀
             </span>
             Was wäre, wenn wir deine Bewertungen von{" "}
-            <span className="text-[#2563eb]">0–1</span> auf{" "}
-            <span className="text-[#7c3aed]">7+ Bewertungen pro Woche</span> bringen könnten?
+            <span className="text-[#6366f1]">0–1</span> auf{" "}
+            <span className="text-[#4f46e5]">7+ Bewertungen pro Woche</span> bringen könnten?
           </p>
         </div>
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/registrierung"
-            className="inline-flex h-12 items-center rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#7c3aed] px-6 text-sm font-semibold text-white shadow-md shadow-indigo-200/50 transition hover:from-blue-600 hover:to-violet-600"
+            className="inline-flex h-12 items-center rounded-2xl bg-[#6366f1] px-6 text-sm font-semibold text-white shadow-md shadow-zinc-300/40 transition hover:bg-[#4f46e5]"
           >
             Kostenlos 14 Tage testen →
           </Link>
@@ -189,19 +189,19 @@ function HowItWorks() {
       n: 1,
       title: "Registrieren",
       desc: "Kostenloses Konto anlegen – E-Mail, Passwort, fertig. Keine Installation.",
-      accent: "from-[#2563eb] to-[#3b82f6]",
+      accent: "from-[#6366f1] to-[#4f46e5]",
     },
     {
       n: 2,
       title: "Kunden eintragen",
       desc: "Name, Telefon und Termin im Kalender erfassen – alles an einem Ort.",
-      accent: "from-[#4f46e5] to-[#6366f1]",
+      accent: "from-[#6366f1] to-[#4f46e5]",
     },
     {
       n: 3,
       title: "SMS geht automatisch raus",
       desc: "Terminbestätigung und Bewertungsanfrage per SMS – du musst nichts mehr abarbeiten.",
-      accent: "from-[#059669] to-[#10b981]",
+      accent: "from-[#6366f1] to-[#4f46e5]",
     },
   ];
 
@@ -247,12 +247,12 @@ function SmsSection() {
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           <IphoneMockup
             badge="Terminbestätigung"
-            badgeStyle="bg-green-100 text-green-700"
+            badgeStyle="bg-indigo-50 text-indigo-700"
             text="Hallo Maria, Ihr Termin am 25. März um 14:00 bei Salon Max ist bestätigt! 😊"
           />
           <IphoneMockup
             badge="Bewertungsanfrage"
-            badgeStyle="bg-blue-100 text-blue-700"
+            badgeStyle="bg-indigo-50 text-indigo-700"
             text="Hallo Maria, danke für Ihren Besuch! 🌟 Wir würden uns sehr über eine Google-Bewertung freuen: [Link] Diese Nachricht kommt nur einmal – versprochen! 😊"
           />
         </div>
@@ -270,7 +270,7 @@ function IphoneMockup({ badge, badgeStyle, text }) {
           <div className="mx-auto mb-3 h-1.5 w-20 rounded-full bg-zinc-300" />
           <div className="rounded-xl bg-white p-3">
             <div className="flex justify-end">
-              <p className="max-w-[245px] rounded-2xl rounded-br-md bg-[#0A84FF] px-3 py-2.5 text-sm leading-relaxed text-white">
+              <p className="max-w-[245px] rounded-2xl rounded-br-md bg-[#6366f1] px-3 py-2.5 text-sm leading-relaxed text-white">
                 {text}
               </p>
             </div>
@@ -314,7 +314,7 @@ function GoogleCard({ review }) {
         </div>
         <GoogleWordmark />
       </div>
-      <p className="mt-2 text-sm text-[#FBBC04]">★★★★★</p>
+      <p className="mt-2 text-sm text-zinc-500">★★★★★</p>
       <p className="mt-2 text-sm text-zinc-700">{review.text}</p>
       <p className="mt-3 text-xs text-zinc-500">{review.business}</p>
     </div>
@@ -323,9 +323,9 @@ function GoogleCard({ review }) {
 
 function TestimonialSection() {
   return (
-    <section className="bg-[#eff6ff] py-16 sm:py-20">
+    <section className="bg-zinc-50 py-16 sm:py-20">
       <div className="mx-auto max-w-4xl px-6 text-center">
-        <p className="text-7xl font-black leading-none text-[#2563eb]">&quot;</p>
+        <p className="text-7xl font-black leading-none text-[#6366f1]">&quot;</p>
         <p className="mt-3 text-2xl italic leading-relaxed text-zinc-700 sm:text-3xl">
           Seit ich Reviewpilots nutze bekomme ich jede Woche 15-20 neue Bewertungen –
           ohne einen Finger zu rühren. Das hat mein Business komplett verändert.
@@ -335,12 +335,12 @@ function TestimonialSection() {
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face"
             alt="Max Gruber"
-            className="h-16 w-16 rounded-full object-cover ring-2 ring-blue-200"
+            className="h-16 w-16 rounded-full object-cover ring-2 ring-indigo-200"
           />
           <p className="mt-3 font-bold text-zinc-900">Max Gruber</p>
           <p className="text-sm text-zinc-500">Inhaber Salon Max, Wien</p>
-          <p className="mt-2 text-[#FBBC04]">★★★★★</p>
-          <span className="mt-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+          <p className="mt-2 text-zinc-500">★★★★★</p>
+          <span className="mt-2 inline-flex rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
             4.9 ★ auf Google · 127 Bewertungen
           </span>
         </div>
@@ -375,7 +375,7 @@ function PricingSection() {
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-2xl px-6">
-        <div className="rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#7c3aed] p-8 text-white shadow-xl">
+        <div className="rounded-2xl bg-gradient-to-br from-[#6366f1] to-[#4f46e5] p-8 text-white shadow-xl">
           <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
             🎯 Alles inklusive
           </span>
@@ -383,7 +383,7 @@ function PricingSection() {
             <span className="text-6xl font-black tracking-tight">€9,90</span>
             <span className="ml-1 text-lg">/Monat</span>
           </div>
-          <p className="mt-2 text-blue-100">Jederzeit kündbar – keine versteckten Kosten</p>
+          <p className="mt-2 text-white/90">Jederzeit kündbar – keine versteckten Kosten</p>
           <ul className="mt-5 space-y-2 text-sm">
             <li>✓ Unbegrenzte Termine</li>
             <li>✓ Automatische SMS</li>
@@ -395,7 +395,7 @@ function PricingSection() {
           </ul>
           <Link
             href="/registrierung"
-            className="mt-7 inline-flex h-11 items-center rounded-2xl bg-white px-6 text-sm font-semibold text-[#2563eb] transition hover:bg-blue-50"
+            className="mt-7 inline-flex h-11 items-center rounded-2xl bg-white px-6 text-sm font-semibold text-[#6366f1] transition hover:bg-zinc-100"
           >
             Jetzt kostenlos testen →
           </Link>
@@ -431,13 +431,6 @@ function Footer() {
 
 function GoogleWordmark() {
   return (
-    <p className="text-xs font-semibold leading-none">
-      <span style={{ color: "#4285F4" }}>G</span>
-      <span style={{ color: "#EA4335" }}>o</span>
-      <span style={{ color: "#FBBC04" }}>o</span>
-      <span style={{ color: "#4285F4" }}>g</span>
-      <span style={{ color: "#34A853" }}>l</span>
-      <span style={{ color: "#EA4335" }}>e</span>
-    </p>
+    <p className="text-xs font-semibold leading-none text-zinc-600">Google</p>
   );
 }
