@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
+import AppShell from "../../components/AppShell";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -84,12 +85,6 @@ export default function DashboardPage() {
     load();
   }, [router]);
 
-  async function onSignOut() {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    router.push("/login");
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-white px-6 py-10 text-zinc-700">Lade Dashboard...</div>
@@ -103,72 +98,48 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/95 shadow-sm backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="text-lg font-extrabold text-[#1e3a8a]">
-            ⭐ ReviewPilot
-          </Link>
-          <div className="flex items-center gap-2">
+    <AppShell activeNav="dashboard">
+      <h1 className="text-3xl font-black tracking-tight">Guten Morgen! 👋</h1>
+      <p className="mt-2 text-zinc-600">Hier ist deine aktuelle Übersicht.</p>
+      {vorname ? (
+        <p className="mt-1 text-sm text-zinc-500">Willkommen zurück, {vorname}.</p>
+      ) : null}
+
+      {!trialActive ? (
+        <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-semibold">Dein Test ist abgelaufen</p>
             <Link
-              href="/settings"
-              className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+              href="/bezahlen"
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
             >
-              Einstellungen
+              Jetzt für €9,90/Monat weitermachen
             </Link>
-            <button
-              onClick={onSignOut}
-              className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
-            >
-              Abmelden
-            </button>
           </div>
         </div>
-      </header>
+      ) : null}
 
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <h1 className="text-3xl font-black tracking-tight">Guten Morgen! 👋</h1>
-        <p className="mt-2 text-zinc-600">Hier ist deine aktuelle Übersicht.</p>
-        {vorname ? (
-          <p className="mt-1 text-sm text-zinc-500">Willkommen zurück, {vorname}.</p>
-        ) : null}
-
-        {!trialActive ? (
-          <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-semibold">Dein Test ist abgelaufen</p>
-              <Link
-                href="/bezahlen"
-                className="inline-flex h-10 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
-              >
-                Jetzt für €9,90/Monat weitermachen
-              </Link>
-            </div>
-          </div>
-        ) : null}
-
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          <StatCard title="Termine heute" value={stats.termineHeute} />
-          <StatCard title="SMS gesendet" value={stats.smsGesendet} />
-          <StatCard title="Bewertungen diese Woche" value={stats.bewertungenWoche} />
-        </div>
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-xl">
-          <Link
-            href="/kalender-ansicht"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            📅 Kalender öffnen
-          </Link>
-          <Link
-            href="/termine"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-purple-700"
-          >
-            📊 Alle Termine
-          </Link>
-        </div>
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <StatCard title="Termine heute" value={stats.termineHeute} />
+        <StatCard title="SMS gesendet" value={stats.smsGesendet} />
+        <StatCard title="Bewertungen diese Woche" value={stats.bewertungenWoche} />
       </div>
-    </div>
+
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:max-w-xl">
+        <Link
+          href="/kalender-ansicht"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-[#2563eb] px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
+        >
+          📅 Kalender öffnen
+        </Link>
+        <Link
+          href="/termine"
+          className="inline-flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 text-sm font-semibold text-white transition hover:from-blue-700 hover:to-purple-700"
+        >
+          📊 Alle Termine
+        </Link>
+      </div>
+    </AppShell>
   );
 }
 
@@ -180,4 +151,3 @@ function StatCard({ title, value }) {
     </div>
   );
 }
-

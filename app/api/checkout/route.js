@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { getAppOrigin } from "../../../lib/appOrigin";
 
 /** Stripe Node SDK braucht die Node-Runtime (nicht Edge). */
 export const runtime = "nodejs";
@@ -37,6 +38,7 @@ export async function POST() {
   }
 
   const stripe = new Stripe(secret);
+  const base = getAppOrigin();
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -52,8 +54,8 @@ export async function POST() {
           quantity: 1,
         },
       ],
-      success_url: "https://reviewpilot-gray.vercel.app/dashboard?success=true",
-      cancel_url: "https://reviewpilot-gray.vercel.app/bezahlen",
+      success_url: `${base}/dashboard?success=true`,
+      cancel_url: `${base}/bezahlen`,
     });
 
     return NextResponse.json({ url: session.url });

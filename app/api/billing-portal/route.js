@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
+import { getAppOrigin } from "../../../lib/appOrigin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,13 +10,6 @@ function getStripe() {
   const secret = process.env.STRIPE_SECRET_KEY?.trim();
   if (!secret?.startsWith("sk_")) return null;
   return new Stripe(secret);
-}
-
-function appOrigin() {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    "https://reviewpilot-gray.vercel.app"
-  );
 }
 
 export async function POST(req) {
@@ -105,7 +99,7 @@ export async function POST(req) {
   }
 
   try {
-    const returnUrl = `${appOrigin()}/settings`;
+    const returnUrl = `${getAppOrigin()}/settings`;
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: returnUrl,
