@@ -69,18 +69,25 @@ export default function Home() {
   );
 }
 
+/** Mind. ~2× Standard-Header-Logo (vorher ~h-11–14 / ~56px) */
+const landingLogoClass =
+  "h-28 w-auto max-h-[7rem] object-contain object-left sm:h-32 sm:max-h-[8rem] md:h-36 md:max-h-[9rem] lg:h-40 lg:max-h-[10rem]";
+
 function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 shadow-sm backdrop-blur">
-      <div className="mx-auto flex min-h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-6 py-2">
-        <BrandLogoLink className="max-w-[min(100%,280px)]" />
+      <div className="mx-auto flex min-h-[8.5rem] max-w-6xl items-center justify-between gap-4 px-6 py-4 sm:min-h-[9.5rem]">
+        <BrandLogoLink
+          className="max-w-[min(100%,min(560px,90vw))]"
+          imgClassName={landingLogoClass}
+        />
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm font-semibold text-zinc-500 hover:text-zinc-700">
             Anmelden
           </Link>
           <Link
             href="/registrierung"
-            className="inline-flex h-10 items-center rounded-xl bg-[#2563eb] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            className="inline-flex h-10 items-center rounded-xl bg-gradient-to-r from-[#2563eb] to-[#7c3aed] px-4 text-sm font-semibold text-white shadow-sm transition hover:from-blue-600 hover:to-violet-600"
           >
             Kostenlos testen →
           </Link>
@@ -97,21 +104,37 @@ function HeroSection() {
         <p className="mx-auto inline-flex rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold text-blue-700">
           ✨ Neu: Jetzt mit automatischer Terminbestätigung
         </p>
-        <h1 className="mt-8 text-4xl font-black leading-tight tracking-tight text-zinc-900 sm:text-5xl md:text-6xl">
-          Deine Kunden vergessen Bewertungen zu schreiben.
+        <h1 className="mt-8 text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl">
+          <span className="text-zinc-900">Deine Kunden vergessen </span>
+          <span className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent [filter:drop-shadow(0_1px_1px_rgba(37,99,235,0.12))]">
+            Bewertungen zu schreiben.
+          </span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600">
           Reviewpilots erinnert sie automatisch – per SMS, zur richtigen Zeit, mit den richtigen
           Worten.
         </p>
-        <p className="mx-auto mt-6 max-w-2xl text-xl font-extrabold leading-snug text-[#1e3a8a] sm:text-2xl">
-          Was wäre, wenn wir deine Bewertungen von 0–1 auf 7+ Bewertungen pro Woche bringen
-          könnten? 🚀
-        </p>
+        <div className="relative mx-auto mt-8 max-w-2xl overflow-hidden rounded-3xl border border-indigo-100/90 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-100 px-6 py-7 shadow-xl shadow-indigo-200/40 ring-1 ring-indigo-100/70 sm:px-10 sm:py-8">
+          <div
+            className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#2563eb] to-[#7c3aed]"
+            aria-hidden
+          />
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600/90">
+            Dein Potenzial
+          </p>
+          <p className="mt-3 text-lg font-extrabold leading-snug text-zinc-800 sm:text-xl md:text-2xl">
+            <span className="mr-1.5 inline-block" aria-hidden>
+              🚀
+            </span>
+            Was wäre, wenn wir deine Bewertungen von{" "}
+            <span className="text-[#2563eb]">0–1</span> auf{" "}
+            <span className="text-[#7c3aed]">7+ Bewertungen pro Woche</span> bringen könnten?
+          </p>
+        </div>
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/registrierung"
-            className="inline-flex h-12 items-center rounded-2xl bg-[#2563eb] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            className="inline-flex h-12 items-center rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#7c3aed] px-6 text-sm font-semibold text-white shadow-md shadow-indigo-200/50 transition hover:from-blue-600 hover:to-violet-600"
           >
             Kostenlos 14 Tage testen →
           </Link>
