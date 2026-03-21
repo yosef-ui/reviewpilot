@@ -72,8 +72,8 @@ export default function Home() {
 function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 shadow-sm backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <div className="text-lg font-extrabold text-[#1e3a8a]">⭐ ReviewPilot</div>
+      <div className="mx-auto flex min-h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-6 py-2">
+        <BrandLogoLink className="max-w-[min(100%,280px)]" />
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm font-semibold text-zinc-500 hover:text-zinc-700">
             Anmelden
@@ -92,23 +92,23 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="bg-[#f8fafc] py-16 sm:py-20">
-      <div className="mx-auto max-w-5xl px-6 text-center">
+    <section className="bg-[#f8fafc] py-16 sm:py-24">
+      <div className="mx-auto max-w-3xl px-6 text-center">
         <p className="mx-auto inline-flex rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold text-blue-700">
           ✨ Neu: Jetzt mit automatischer Terminbestätigung
         </p>
-        <h1 className="mt-6 text-4xl font-black tracking-tight sm:text-6xl">
-          <span className="block text-black">Deine Kunden vergessen</span>
-          <span className="block text-[#2563eb]">Bewertungen zu schreiben.</span>
+        <h1 className="mt-8 text-4xl font-black leading-tight tracking-tight text-zinc-900 sm:text-5xl md:text-6xl">
+          Deine Kunden vergessen Bewertungen zu schreiben.
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
-          ReviewPilot erinnert sie automatisch – per SMS, zur richtigen Zeit, mit
-          den richtigen Worten.
+        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600">
+          Reviewpilots erinnert sie automatisch – per SMS, zur richtigen Zeit, mit den richtigen
+          Worten.
         </p>
-        <p className="mx-auto mt-6 max-w-3xl text-2xl font-extrabold leading-tight text-[#1e3a8a]">
-          Was wäre, wenn wir deine Bewertungen von 0–5 pro Woche auf 15–20 bringen könnten? 🚀
+        <p className="mx-auto mt-6 max-w-2xl text-xl font-extrabold leading-snug text-[#1e3a8a] sm:text-2xl">
+          Was wäre, wenn wir deine Bewertungen von 0–1 auf 7+ Bewertungen pro Woche bringen
+          könnten? 🚀
         </p>
-        <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/registrierung"
             className="inline-flex h-12 items-center rounded-2xl bg-[#2563eb] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
@@ -122,7 +122,7 @@ function HeroSection() {
             Wie funktioniert&apos;s?
           </Link>
         </div>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold text-zinc-600">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-semibold text-zinc-600">
           <span>✓ DSGVO-konform</span>
           <span>✓ Setup in 5 Min</span>
         </div>
@@ -161,49 +161,58 @@ function Ticker() {
 }
 
 function HowItWorks() {
+  const steps = [
+    {
+      n: 1,
+      title: "Registrieren",
+      desc: "Kostenloses Konto anlegen – E-Mail, Passwort, fertig. Keine Installation.",
+      accent: "from-[#2563eb] to-[#3b82f6]",
+    },
+    {
+      n: 2,
+      title: "Kunden eintragen",
+      desc: "Name, Telefon und Termin im Kalender erfassen – alles an einem Ort.",
+      accent: "from-[#4f46e5] to-[#6366f1]",
+    },
+    {
+      n: 3,
+      title: "SMS geht automatisch raus",
+      desc: "Terminbestätigung und Bewertungsanfrage per SMS – du musst nichts mehr abarbeiten.",
+      accent: "from-[#059669] to-[#10b981]",
+    },
+  ];
+
   return (
-    <section className="bg-white py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center text-3xl font-extrabold tracking-tight">So einfach geht&apos;s</h2>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-          <StepCard
-            border="border-blue-200"
-            number={1}
-            emoji="📞"
-            title="Kunde ruft an"
-            text="Termin wird telefonisch vereinbart – wie immer."
-          />
-          <StepCard
-            border="border-purple-200"
-            number={2}
-            emoji="📅"
-            title="In ReviewPilot eintragen"
-            text="Name und Nummer in deinen ReviewPilot Kalender – fertig. Kein extra Tool."
-          />
-          <StepCard
-            border="border-green-200"
-            number={3}
-            emoji="⭐"
-            title="Wir erledigen den Rest"
-            text="ReviewPilot schickt Terminbestätigung und danach automatisch die Bewertungsanfrage."
-          />
-        </div>
+    <section className="border-y border-zinc-100 bg-white py-16 sm:py-24">
+      <div className="mx-auto max-w-5xl px-6">
+        <h2 className="text-center text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
+          Drei Schritte. Mehr Bewertungen.
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center text-zinc-600">
+          Klar strukturiert, ohne Schnickschnack – kein Fremd-Tool, keine Screenshots von anderen
+          Apps.
+        </p>
+
+        <ol className="mt-14 grid list-none gap-8 md:grid-cols-3 md:gap-6">
+          {steps.map((step) => (
+            <li
+              key={step.n}
+              className="flex flex-col rounded-2xl border border-zinc-200/80 bg-[#fafafa] p-8 shadow-sm transition hover:border-zinc-300 hover:shadow-md"
+            >
+              <div
+                className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-lg font-black text-white shadow-sm ${step.accent}`}
+              >
+                {step.n}
+              </div>
+              <h3 className="mt-6 text-xl font-bold tracking-tight text-zinc-900">
+                Schritt {step.n}: {step.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-600">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
-  );
-}
-
-function StepCard({ border, number, emoji, title, text }) {
-  return (
-    <div className={`relative rounded-2xl border ${border} bg-white p-6 shadow-sm`}>
-      <span className="absolute -top-3 left-4 rounded-full bg-zinc-900 px-2.5 py-1 text-xs font-bold text-white">
-        {number}
-      </span>
-      <p className="text-5xl">{emoji}</p>
-      <h3 className="mt-3 text-xl font-bold">{title}</h3>
-      <p className="mt-2 text-zinc-600">{text}</p>
-      {number < 3 ? <p className="mt-4 text-xl text-zinc-400">→</p> : null}
-    </div>
   );
 }
 
@@ -255,7 +264,7 @@ function ReviewsSection() {
       <div className="mx-auto max-w-6xl px-6">
         <h2 className="text-center text-3xl font-extrabold tracking-tight">Was Kunden sagen 💬</h2>
         <p className="mt-3 text-center text-zinc-600">
-          Echte Bewertungen – automatisch gesammelt mit ReviewPilot
+          Echte Bewertungen – automatisch gesammelt mit Reviewpilots
         </p>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {reviews.map((r) => (
@@ -295,7 +304,7 @@ function TestimonialSection() {
       <div className="mx-auto max-w-4xl px-6 text-center">
         <p className="text-7xl font-black leading-none text-[#2563eb]">&quot;</p>
         <p className="mt-3 text-2xl italic leading-relaxed text-zinc-700 sm:text-3xl">
-          Seit ich ReviewPilot nutze bekomme ich jede Woche 15-20 neue Bewertungen –
+          Seit ich Reviewpilots nutze bekomme ich jede Woche 15-20 neue Bewertungen –
           ohne einen Finger zu rühren. Das hat mein Business komplett verändert.
         </p>
         <div className="mt-8 flex flex-col items-center">
@@ -321,7 +330,7 @@ function WhySection() {
   return (
     <section className="bg-[#f8fafc] py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <h2 className="text-center text-3xl font-extrabold tracking-tight">Warum ReviewPilot?</h2>
+        <h2 className="text-center text-3xl font-extrabold tracking-tight">Warum Reviewpilots?</h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {whyCards.map(([emoji, title, sub, color]) => (
             <div
@@ -357,7 +366,7 @@ function PricingSection() {
             <li>✓ Automatische SMS</li>
             <li>✓ Terminbestätigung</li>
             <li>✓ Bewertungsanfrage</li>
-            <li>✓ ReviewPilot Kalender</li>
+            <li>✓ Reviewpilots Kalender</li>
             <li>✓ DSGVO-konform</li>
             <li>✓ E-Mail Support</li>
           </ul>
