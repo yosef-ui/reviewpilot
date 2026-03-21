@@ -105,8 +105,8 @@ export default function OnboardingPage() {
 
     const user = session.user;
 
-    // Wichtig: .select() nach UPDATE – sonst meldet PostgREST bei 0 Zeilen oft keinen Fehler
-    // (z. B. keine profiles-Zeile), und onboarding_done wird nicht gesetzt.
+    // Nur UPDATE – Profilzeile existiert bereits (z. B. Trigger bei Registrierung). Kein INSERT
+    // (INSERT kann an einer separaten Spalte „id“ scheitern).
     const { data: updatedRow, error: upErr } = await supabase
       .from("profiles")
       .update({
@@ -124,52 +124,12 @@ export default function OnboardingPage() {
       return;
     }
 
-    let saved = updatedRow?.onboarding_done === true;
-
-    // Keine Zeile getroffen (kein Profil): einmalig anlegen
-    if (!saved) {
-      const { data: existing } = await supabase
-        .from("profiles")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (!existing) {
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const meta = user.user_metadata || {};
-        const vn = String(meta.vorname ?? "-").trim() || "-";
-        const nn = String(meta.nachname ?? "-").trim() || "-";
-
-        const { data: inserted, error: insErr } = await supabase
-          .from("profiles")
-          .insert({
-            user_id: user.id,
-            vorname: vn,
-            nachname: nn,
-            trial_start: new Date().toISOString(),
-            trial_end: trialEnd.toISOString(),
-            is_paid: false,
-            firmenname,
-            google_review_link: googleReviewLink,
-            onboarding_done: true,
-          })
-          .select("user_id, onboarding_done")
-          .maybeSingle();
-
-        if (insErr) {
-          setSaving(false);
-          setError(insErr.message);
-          return;
-        }
-        saved = inserted?.onboarding_done === true;
-      }
-    }
+    const saved = updatedRow?.onboarding_done === true;
 
     if (!saved) {
       setSaving(false);
       setError(
-        "Profil wurde nicht aktualisiert (0 Zeilen). Bitte in Supabase die Spalte „onboarding_done“ in „profiles“ anlegen (siehe supabase/profiles_onboarding.sql) und es erneut versuchen."
+        "Dein Profil konnte nicht aktualisiert werden (keine passende Zeile für deinen Account). Bitte prüfe in Supabase, ob eine profiles-Zeile mit user_id = deiner User-ID existiert."
       );
       return;
     }
