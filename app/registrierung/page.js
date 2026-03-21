@@ -71,7 +71,7 @@ export default function RegistrierungPage() {
     }
 
     setLoading(false);
-    router.push("/onboarding");
+    router.replace("/onboarding");
   }
 
   return (

@@ -14,6 +14,8 @@ export default function OnboardingPage() {
     firmenname: "",
     googleReviewLink: "",
   });
+  /** Nach erfolgreichem Speichern: Name für Erfolgs-Screen + Auto-Redirect */
+  const [doneFirmenname, setDoneFirmenname] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -32,14 +34,11 @@ export default function OnboardingPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("firmenname, google_review_link")
+        .select("firmenname, google_review_link, onboarding_done")
         .eq("user_id", user.id)
         .single();
 
-      if (
-        profile?.firmenname?.trim() &&
-        profile?.google_review_link?.trim()
-      ) {
+      if (profile?.onboarding_done === true) {
         router.replace("/dashboard");
         return;
       }
@@ -52,6 +51,14 @@ export default function OnboardingPage() {
     }
     load();
   }, [router]);
+
+  useEffect(() => {
+    if (!doneFirmenname) return;
+    const id = setTimeout(() => {
+      router.replace("/dashboard");
+    }, 2800);
+    return () => clearTimeout(id);
+  }, [doneFirmenname, router]);
 
   function onChange(e) {
     const { name, value } = e.target;
@@ -93,6 +100,7 @@ export default function OnboardingPage() {
       .update({
         firmenname,
         google_review_link: googleReviewLink,
+        onboarding_done: true,
       })
       .eq("user_id", user.id);
 
@@ -101,13 +109,38 @@ export default function OnboardingPage() {
       setError(upErr.message);
       return;
     }
-    router.push("/dashboard");
+    setDoneFirmenname(firmenname);
   }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white px-6 py-10 text-zinc-600">
         Lade Onboarding...
+      </div>
+    );
+  }
+
+  if (doneFirmenname) {
+    return (
+      <div className="min-h-screen bg-white text-zinc-900">
+        <div className="mx-auto max-w-xl px-6 py-10">
+          <BrandLogoLink />
+          <div className="mt-8 rounded-2xl border border-indigo-200 bg-indigo-50/80 p-8 text-center shadow-sm">
+            <p className="text-xl font-bold text-zinc-900">
+              Hallo {doneFirmenname}! Alles bereit.
+            </p>
+            <p className="mt-3 text-sm text-zinc-600">
+              Du wirst gleich zum Dashboard weitergeleitet …
+            </p>
+            <button
+              type="button"
+              onClick={() => router.replace("/dashboard")}
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-[#6366f1] px-6 text-sm font-semibold text-white transition hover:bg-[#4f46e5]"
+            >
+              Zum Dashboard
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -135,14 +168,14 @@ export default function OnboardingPage() {
                 onChange={onChange}
                 required
                 placeholder="z. B. Musterfriseur Berlin"
-                className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
             </label>
             <div className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 Link zur Google-Bewertung
               </span>
-              <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50/80 px-3 py-3 text-sm leading-relaxed text-blue-950">
+              <div className="mb-3 rounded-xl border border-indigo-200 bg-indigo-50/80 px-3 py-3 text-sm leading-relaxed text-zinc-800">
                 <p className="m-0">
                   Deinen Google Review Link kostenlos erstellen: Geh auf
                   whitespark.ca/google-review-link-generator, gib deinen
@@ -152,7 +185,7 @@ export default function OnboardingPage() {
                   href="https://whitespark.ca/google-review-link-generator"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex h-10 items-center justify-center rounded-lg border border-blue-300 bg-white px-4 text-sm font-semibold text-blue-800 shadow-sm transition hover:bg-blue-100"
+                  className="mt-3 inline-flex h-10 items-center justify-center rounded-lg border border-indigo-300 bg-white px-4 text-sm font-semibold text-indigo-800 shadow-sm transition hover:bg-indigo-100"
                 >
                   Link Generator öffnen
                 </a>
@@ -164,7 +197,7 @@ export default function OnboardingPage() {
                 onChange={onChange}
                 required
                 placeholder="https://g.page/.../review"
-                className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
 
@@ -175,7 +208,7 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-70"
+              className="inline-flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-700 hover:to-indigo-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {saving ? "Speichern…" : "Weiter zum Dashboard →"}
             </button>

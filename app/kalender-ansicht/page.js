@@ -83,13 +83,10 @@ export default function KalenderAnsichtPage() {
       setUserId(user.id);
       const { data: profile } = await supabase
         .from("profiles")
-        .select("firmenname, google_review_link")
+        .select("firmenname, google_review_link, onboarding_done")
         .eq("user_id", user.id)
         .single();
-      if (
-        !profile?.firmenname?.trim() ||
-        !profile?.google_review_link?.trim()
-      ) {
+      if (!profile || profile.onboarding_done !== true) {
         setLoading(false);
         router.replace("/onboarding");
         return;
