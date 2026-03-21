@@ -31,11 +31,13 @@ export default function KalenderPage() {
     });
   }, [termine]);
 
-  async function refetchTermine() {
-    if (!supabase) return;
+  async function refetchTermine(uid) {
+    const id = uid ?? userId;
+    if (!supabase || !id) return;
     const { data, error } = await supabase
       .from("Termine")
       .select("*")
+      .eq("user_id", id)
       .order("datum", { ascending: true })
       .order("uhrzeit", { ascending: true });
     if (error) {
@@ -64,7 +66,7 @@ export default function KalenderPage() {
 
       setUserId(user.id);
       setUserChecked(true);
-      await refetchTermine();
+      await refetchTermine(user.id);
     }
     boot();
   }, [router]);
@@ -81,8 +83,13 @@ export default function KalenderPage() {
       setStatus("Bitte alle Pflichtfelder ausfüllen.");
       return;
     }
+    if (!userId) {
+      setStatus("Nicht angemeldet.");
+      return;
+    }
 
     const payload = {
+      user_id: userId,
       kundenname: kundenname.trim(),
       telefonnummer: telefonnummer.trim(),
       datum,
@@ -109,13 +116,14 @@ export default function KalenderPage() {
       );
       kundeErr = res.error;
     }
+    let baseStatus = "Termin gespeichert.";
     if (kundeErr) {
-      setStatus(`Termin gespeichert. Hinweis Kundenliste: ${kundeErr.message}`);
+      baseStatus = `Termin gespeichert. Hinweis Kundenliste: ${kundeErr.message}`;
     }
 
     if (optIn) {
       try {
-        await fetch("/api/sms", {
+        const smsRes = await fetch("/api/sms", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -124,9 +132,25 @@ export default function KalenderPage() {
             text: `Hallo ${payload.kundenname}, Ihr Termin am ${datum} um ${uhrzeit} ist bestätigt! Bei Fragen einfach anrufen. Ihr ReviewPilot Team 😊`,
           }),
         });
-      } catch {
-        // Best effort only
+        const body = await smsRes.json().catch(() => ({}));
+        if (!smsRes.ok) {
+          const errDetail =
+            typeof body?.error === "string" ? body.error : `HTTP ${smsRes.status}`;
+          setStatus(`${baseStatus} Bestätigungs-SMS fehlgeschlagen: ${errDetail}`);
+        } else {
+          setStatus(
+            kundeErr
+              ? `${baseStatus} Bestätigungs-SMS wurde gesendet.`
+              : "Termin gespeichert. Bestätigungs-SMS wurde gesendet."
+          );
+        }
+      } catch (e) {
+        setStatus(
+          `${baseStatus} Bestätigungs-SMS fehlgeschlagen: ${e?.message || "Netzwerkfehler"}`
+        );
       }
+    } else {
+      setStatus(baseStatus);
     }
 
     setKundenname("");
@@ -134,14 +158,15 @@ export default function KalenderPage() {
     setDatum("");
     setUhrzeit("");
     setOptIn(false);
-    if (!kundeErr) {
-      setStatus("Termin gespeichert.");
-    }
     await refetchTermine();
   }
 
   async function markTerminErledigt(termin) {
     if (!supabase) return;
+    if (!userId) {
+      setStatus("Nicht angemeldet.");
+      return;
+    }
     if (termin?.sms_gesendet) return;
     if (!termin?.optin) {
       setStatus("Kein Opt-in vorhanden. SMS wird nicht gesendet.");
@@ -162,19 +187,25 @@ export default function KalenderPage() {
           link: GOOGLE_REVIEW_LINK_FALLBACK,
         }),
       });
-    } catch {
-      setStatus("SMS konnte nicht gesendet werden.");
+    } catch (e) {
+      setStatus(`SMS konnte nicht gesendet werden: ${e?.message || "Netzwerkfehler"}`);
       setSendingId(null);
       return;
     }
 
+    const body = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setStatus("SMS konnte nicht gesendet werden.");
+      const errDetail =
+        typeof body?.error === "string" ? body.error : `HTTP ${res.status}`;
+      setStatus(`SMS fehlgeschlagen: ${errDetail}`);
       setSendingId(null);
       return;
     }
 
-    const query = supabase.from("Termine").update({ sms_gesendet: true });
+    const query = supabase
+      .from("Termine")
+      .update({ sms_gesendet: true })
+      .eq("user_id", userId);
     const { error } =
       termin.id !== undefined && termin.id !== null
         ? await query.eq("id", termin.id)
@@ -197,8 +228,12 @@ export default function KalenderPage() {
 
   async function removeTermin(termin) {
     if (!supabase) return;
+    if (!userId) {
+      setStatus("Nicht angemeldet.");
+      return;
+    }
 
-    const query = supabase.from("Termine").delete();
+    const query = supabase.from("Termine").delete().eq("user_id", userId);
     const { error } =
       termin.id !== undefined && termin.id !== null
         ? await query.eq("id", termin.id)
