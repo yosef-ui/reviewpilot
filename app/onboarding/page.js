@@ -138,10 +138,24 @@ export default function OnboardingPage() {
                 className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
             </label>
-            <label className="block">
+            <div className="block">
               <span className="mb-1 block text-sm font-medium text-zinc-700">
                 Link zur Google-Bewertung
               </span>
+              <div className="mb-3 rounded-xl border border-blue-200 bg-blue-50/80 px-3 py-2.5 text-xs leading-relaxed text-blue-950">
+                <p className="m-0">
+                  Deinen Google Review Link findest du kostenlos auf{" "}
+                  <a
+                    href="https://whitespark.ca/google-review-link-generator"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-blue-700 underline decoration-blue-300 underline-offset-2 hover:text-blue-900"
+                  >
+                    whitespark.ca/google-review-link-generator
+                  </a>{" "}
+                  – gib dort deinen Firmennamen ein und kopiere den Link.
+                </p>
+              </div>
               <input
                 name="googleReviewLink"
                 type="url"
@@ -151,11 +165,7 @@ export default function OnboardingPage() {
                 placeholder="https://g.page/.../review"
                 className="h-11 w-full rounded-xl border border-zinc-300 px-3 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               />
-              <span className="mt-1 block text-xs text-zinc-500">
-                Den Link findest du in deinem Google Business Profil unter
-                „Kunden gewinnen“ → Bewertungen.
-              </span>
-            </label>
+            </div>
 
             {error ? (
               <p className="text-sm font-medium text-rose-600">{error}</p>
