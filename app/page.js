@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandLogoLink, BrandLogoFooter } from "../components/BrandLogo";
 
 const tickerItems = [
   { text: "⭐ +18 Bewertungen/Monat", color: "bg-blue-100 text-blue-700" },
@@ -122,7 +123,6 @@ function HeroSection() {
           </Link>
         </div>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold text-zinc-600">
-          <span>✓ Keine Kreditkarte</span>
           <span>✓ DSGVO-konform</span>
           <span>✓ Setup in 5 Min</span>
         </div>
@@ -378,8 +378,8 @@ function Footer() {
     <footer className="border-t border-zinc-200 bg-[#f8fafc] py-6 text-sm text-zinc-600">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-bold text-zinc-900">⭐ ReviewPilot</p>
-          <p>© 2026 ReviewPilot</p>
+          <BrandLogoFooter className="mb-2" />
+          <p>© 2026 Reviewpilots</p>
         </div>
         <div className="flex gap-5">
           <a href="#" className="hover:text-zinc-900">

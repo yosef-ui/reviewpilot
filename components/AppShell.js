@@ -29,8 +29,8 @@ export default function AppShell({ activeNav, children }) {
   return (
     <div className="min-h-screen bg-white text-zinc-900">
       <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/95 shadow-sm backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-          <BrandLogoLink />
+        <div className="mx-auto flex min-h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-6 py-2">
+          <BrandLogoLink className="max-w-[min(100%,280px)]" />
           <div className="flex items-center gap-2">
             <Link
               href="/settings"
