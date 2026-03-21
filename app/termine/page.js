@@ -16,12 +16,15 @@ export default function TerminePage() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  async function refetch() {
-    if (!supabase) return;
+  async function refetch(uid) {
+    const id = uid ?? userId;
+    if (!supabase || !id) return;
     const { data, error } = await supabase
       .from("Termine")
       .select("*")
+      .eq("user_id", id)
       .order("datum", { ascending: false })
       .order("uhrzeit", { ascending: false });
     if (error) {
@@ -45,7 +48,8 @@ export default function TerminePage() {
         router.push("/login");
         return;
       }
-      await refetch();
+      setUserId(user.id);
+      await refetch(user.id);
       setLoading(false);
     }
     boot();
@@ -73,11 +77,14 @@ export default function TerminePage() {
   }, [termine, search, filter]);
 
   async function markErledigt(termin) {
-    if (!supabase) return;
+    if (!supabase || !userId) return;
     if (termin?.bewertet) return;
     setSavingId(termin.id ?? "fallback");
 
-    const query = supabase.from("Termine").update({ bewertet: true });
+    const query = supabase
+      .from("Termine")
+      .update({ bewertet: true })
+      .eq("user_id", userId);
     const { error } =
       termin.id !== undefined && termin.id !== null
         ? await query.eq("id", termin.id)
