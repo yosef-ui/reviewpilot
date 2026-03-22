@@ -10,6 +10,7 @@ const navItems = [
   { href: "/kalender-ansicht", label: "Kalender" },
   { href: "/termine", label: "Termine" },
   { href: "/settings", label: "Einstellungen" },
+  { href: "/settings", label: "Abrechnung" },
 ];
 
 /**
@@ -63,7 +64,7 @@ export default function AppShell({ activeNav, children }) {
                 (activeNav === "settings" && item.href === "/settings");
               return (
                 <Link
-                  key={item.href}
+                  key={`${item.href}-${item.label}`}
                   href={item.href}
                   className={`whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-semibold transition lg:whitespace-normal ${
                     active

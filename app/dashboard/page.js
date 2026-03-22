@@ -11,6 +11,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [vorname, setVorname] = useState("");
+  const [firmenname, setFirmenname] = useState("");
   const [trialActive, setTrialActive] = useState(true);
   const [stats, setStats] = useState({
     termineHeute: 0,
@@ -38,7 +39,7 @@ export default function DashboardPage() {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("vorname, trial_end, onboarding_done")
+        .select("vorname, firmenname, trial_end, onboarding_done")
         .eq("user_id", user.id)
         .single();
 
@@ -49,6 +50,7 @@ export default function DashboardPage() {
       }
 
       setVorname(profile.vorname || "");
+      setFirmenname(profile.firmenname?.trim() || "");
       const active = profile.trial_end
         ? new Date(profile.trial_end).getTime() > new Date().getTime()
         : true;
@@ -106,7 +108,9 @@ export default function DashboardPage() {
 
   return (
     <AppShell activeNav="dashboard">
-      <h1 className="text-3xl font-black tracking-tight">Guten Morgen! 👋</h1>
+      <h1 className="text-3xl font-black tracking-tight">
+        Hallo{firmenname ? ` ${firmenname}` : ""}!
+      </h1>
       <p className="mt-2 text-zinc-600">Hier ist deine aktuelle Übersicht.</p>
       {vorname ? (
         <p className="mt-1 text-sm text-zinc-500">Willkommen zurück, {vorname}.</p>
