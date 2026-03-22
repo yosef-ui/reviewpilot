@@ -10,12 +10,12 @@ const navItems = [
   { href: "/kalender-ansicht", label: "Kalender" },
   { href: "/termine", label: "Termine" },
   { href: "/settings", label: "Einstellungen" },
-  { href: "/settings", label: "Abrechnung" },
+  { href: "/abrechnung", label: "Abrechnung" },
 ];
 
 /**
  * @param {object} props
- * @param {'dashboard' | 'kalender' | 'termine' | 'settings'} props.activeNav
+ * @param {'dashboard' | 'kalender' | 'termine' | 'settings' | 'abrechnung'} props.activeNav
  * @param {React.ReactNode} props.children
  */
 export default function AppShell({ activeNav, children }) {
@@ -61,7 +61,8 @@ export default function AppShell({ activeNav, children }) {
                 (activeNav === "dashboard" && item.href === "/dashboard") ||
                 (activeNav === "kalender" && item.href === "/kalender-ansicht") ||
                 (activeNav === "termine" && item.href === "/termine") ||
-                (activeNav === "settings" && item.href === "/settings");
+                (activeNav === "settings" && item.href === "/settings") ||
+                (activeNav === "abrechnung" && item.href === "/abrechnung");
               return (
                 <Link
                   key={`${item.href}-${item.label}`}
