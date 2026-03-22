@@ -12,7 +12,8 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const [vorname, setVorname] = useState("");
   const [firmenname, setFirmenname] = useState("");
-  const [trialActive, setTrialActive] = useState(true);
+  /** true wenn trial_end in der Vergangenheit liegt und Nutzer nicht bezahlt hat */
+  const [showTrialExpiredBanner, setShowTrialExpiredBanner] = useState(false);
   const [stats, setStats] = useState({
     termineHeute: 0,
     smsGesendet: 0,
@@ -39,7 +40,7 @@ export default function DashboardPage() {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select("vorname, firmenname, trial_end, onboarding_done")
+        .select("vorname, firmenname, trial_end, is_paid, onboarding_done")
         .eq("user_id", user.id)
         .single();
 
@@ -51,10 +52,13 @@ export default function DashboardPage() {
 
       setVorname(profile.vorname || "");
       setFirmenname(profile.firmenname?.trim() || "");
-      const active = profile.trial_end
-        ? new Date(profile.trial_end).getTime() > new Date().getTime()
-        : true;
-      setTrialActive(active);
+      const trialEndMs = profile.trial_end
+        ? new Date(profile.trial_end).getTime()
+        : null;
+      const trialExpired =
+        trialEndMs != null && trialEndMs <= Date.now();
+      const isPaid = profile.is_paid === true;
+      setShowTrialExpiredBanner(trialExpired && !isPaid);
 
       const today = new Date();
       const todayStr = today.toISOString().slice(0, 10);
@@ -108,26 +112,28 @@ export default function DashboardPage() {
 
   return (
     <AppShell activeNav="dashboard">
+      {showTrialExpiredBanner ? (
+        <div className="mb-6 rounded-2xl border border-rose-300 bg-rose-600 p-4 text-white shadow-sm">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-semibold">
+              Dein Testzeitraum ist abgelaufen – jetzt upgraden
+            </p>
+            <Link
+              href="/bezahlen"
+              className="inline-flex h-10 shrink-0 items-center justify-center rounded-xl bg-white px-4 text-sm font-semibold text-rose-700 transition hover:bg-rose-50"
+            >
+              Jetzt upgraden
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       <h1 className="text-3xl font-black tracking-tight">
         Hallo{firmenname ? ` ${firmenname}` : ""}!
       </h1>
       <p className="mt-2 text-zinc-600">Hier ist deine aktuelle Übersicht.</p>
       {vorname ? (
         <p className="mt-1 text-sm text-zinc-500">Willkommen zurück, {vorname}.</p>
-      ) : null}
-
-      {!trialActive ? (
-        <div className="mt-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-rose-800">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="font-semibold">Dein Test ist abgelaufen</p>
-            <Link
-              href="/bezahlen"
-              className="inline-flex h-10 items-center justify-center rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
-            >
-              Jetzt für €9,90/Monat weitermachen
-            </Link>
-          </div>
-        </div>
       ) : null}
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
