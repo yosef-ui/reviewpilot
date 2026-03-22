@@ -1,33 +1,13 @@
-import { createClient } from "@supabase/supabase-js";
 import twilio from "twilio";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const FROM = process.env.TWILIO_WHATSAPP_FROM;
 
+const DEFAULT_FIRMENNAME = "Ihr Termin";
+
 export async function POST(request) {
   try {
-    const authHeader = request.headers.get("Authorization");
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return Response.json({ error: "Nicht autorisiert" }, { status: 401 });
-    }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("firmenname")
-      .eq("user_id", user.id)
-      .single();
-
-    const firmenname = profile?.firmenname || "Ihr Termin";
     const { phone, date, time, type } = await request.json();
 
     if (!phone) {
@@ -51,18 +31,19 @@ export async function POST(request) {
           from: FROM,
           to,
           body:
-            `Darf *${firmenname}* Ihnen nach dem Termin eine kurze Bewertungsanfrage senden?\n\n` +
+            `Darf *${DEFAULT_FIRMENNAME}* Ihnen nach dem Termin eine kurze Bewertungsanfrage senden?\n\n` +
             `✅ Antworten Sie mit *JA*\n` +
             `❌ Antworten Sie mit *NEIN*`,
         });
       }, 2000);
     } else if (type === "review") {
-      const reviewLink = `${process.env.NEXT_PUBLIC_APP_URL}/bewerten/${user.id}`;
+      const base = process.env.NEXT_PUBLIC_APP_URL || "";
+      const reviewLink = `${base}/bewerten?phone=${encodeURIComponent(phone)}`;
       message = await client.messages.create({
         from: FROM,
         to,
         body:
-          `Hallo! 👋 Wie war Ihr Besuch bei *${firmenname}*?\n\n` +
+          `Hallo! 👋 Wie war Ihr Besuch bei *${DEFAULT_FIRMENNAME}*?\n\n` +
           `Wir würden uns über eine kurze Bewertung freuen ⭐\n` +
           `${reviewLink}`,
       });
